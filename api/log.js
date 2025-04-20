@@ -1,28 +1,22 @@
 // api/log.js
 import { MongoClient } from "mongodb";
 
-const uri = "mongodb://bouguerra0abbes:graduate*Flutter@urbages-cluster.qjsgysy.mongodb.net/?retryWrites=true&w=majority&appName=urbages-cluster";
-
+const uri = "mongodb+srv://bouguerra0abbes:graduate%2AFlutter@urbages-cluster.qjsgysy.mongodb.net/?retryWrites=true&w=majority&appName=urbages-cluster";
 const client = new MongoClient(uri);
 const dbName = "urbages_logs";
 
-export default async function handler(req, res) {
+export default async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Méthode non autorisée" });
   }
 
   try {
     const log = req.body;
-
     if (!log || !log.action || !log.email) {
       return res.status(400).json({ message: "Champs requis manquants" });
     }
 
-    // Connect MongoDB
-    if (!client.topology || !client.topology.isConnected()) {
-      await client.connect();
-    }
-
+    await client.connect();
     const db = client.db(dbName);
     const collection = db.collection("logs");
 
@@ -33,4 +27,4 @@ export default async function handler(req, res) {
     console.error("Erreur API log:", error);
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
-}
+};
