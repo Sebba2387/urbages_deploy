@@ -2,8 +2,18 @@
 import { MongoClient } from "mongodb";
 
 const uri = "mongodb+srv://bouguerra0abbes:graduate*Flutter@urbages-cluster.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
-const dbName = "urbages_logs";
+const dbName = "urbages_db";
+
+let client;
+let db;
+
+const connectToDatabase = async () => {
+  if (client && db) return { client, db }; // Si déjà connecté, on réutilise la connexion
+  client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  await client.connect();
+  db = client.db(dbName);
+  return { client, db };
+};
 
 export default async (req, res) => {
   if (req.method !== "POST") {
@@ -16,8 +26,7 @@ export default async (req, res) => {
       return res.status(400).json({ message: "Champs requis manquants" });
     }
 
-    await client.connect();
-    const db = client.db(dbName);
+    const { db } = await connectToDatabase(); // Connexion à la DB
     const collection = db.collection("logs");
 
     await collection.insertOne(log);

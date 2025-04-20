@@ -1,7 +1,6 @@
 {
-    "name": "urbages-api",
-    "version": "1.0.0",
-    "main": "index.js",
-    "type": "module"
-  }
-  
+  "action": "login",
+  "email": "user@example.com",
+  "date": "2025-04-20T22:00:00Z",
+  "ip": "192.168.1.1"
+}
