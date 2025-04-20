@@ -1,7 +1,8 @@
 // api/log.js
 import { MongoClient } from "mongodb";
 
-const uri = "mongodb+srv://bouguerra0abbes:graduate*Flutter@urbages-cluster.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb://bouguerra0abbes:graduate*Flutter@urbages-cluster.qjsgysy.mongodb.net/?retryWrites=true&w=majority&appName=urbages-cluster";
+
 const client = new MongoClient(uri);
 const dbName = "urbages_logs";
 
