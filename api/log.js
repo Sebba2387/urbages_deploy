@@ -2,31 +2,27 @@
 import { MongoClient } from "mongodb";
 
 const uri = "mongodb+srv://bouguerra0abbes:graduate*Flutter@urbages-cluster.mongodb.net/?retryWrites=true&w=majority";
-const dbName = "urbages_db";
+const client = new MongoClient(uri);
+const dbName = "urbages_logs";
 
-let client;
-let db;
-
-const connectToDatabase = async () => {
-  if (client && db) return { client, db }; // Si déjà connecté, on réutilise la connexion
-  client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-  await client.connect();
-  db = client.db(dbName);
-  return { client, db };
-};
-
-export default async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Méthode non autorisée" });
   }
 
   try {
     const log = req.body;
+
     if (!log || !log.action || !log.email) {
       return res.status(400).json({ message: "Champs requis manquants" });
     }
 
-    const { db } = await connectToDatabase(); // Connexion à la DB
+    // Connect MongoDB
+    if (!client.topology || !client.topology.isConnected()) {
+      await client.connect();
+    }
+
+    const db = client.db(dbName);
     const collection = db.collection("logs");
 
     await collection.insertOne(log);
@@ -36,4 +32,4 @@ export default async (req, res) => {
     console.error("Erreur API log:", error);
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
-};
+}
